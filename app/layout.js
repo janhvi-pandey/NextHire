@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import ConstellationBackground from "@/components/reusable/ConstellationBackground";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -21,7 +22,9 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      > <div className="fixed inset-0 -z-10">
+      <ConstellationBackground/>
+    </div>
         {children}
       </body>
     </html>
