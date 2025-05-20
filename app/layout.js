@@ -22,9 +22,10 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      > <div className="fixed inset-0 -z-10">
+
+      > 
       <ConstellationBackground/>
-    </div>
+      
         {children}
       </body>
     </html>
