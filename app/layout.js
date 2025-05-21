@@ -1,6 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import ConstellationBackground from "@/components/reusable/ConstellationBackground";
 import "./globals.css";
+import { AuthProvider } from '@/context/AuthContext';
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,8 +27,10 @@ export default function RootLayout({ children }) {
 
       > 
       <ConstellationBackground/>
-      
-        {children}
+      <AuthProvider>
+          {children}
+        </AuthProvider>
+        
       </body>
     </html>
   );

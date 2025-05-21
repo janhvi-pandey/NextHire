@@ -1,34 +1,30 @@
-import connectToDB from "@/lib/db";
+import connectDB from "@/lib/db";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-export async function POST(request) {
+const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
+
+export async function POST(req) {
+  await connectDB();
+  const { email, password } = await req.json();
+
   try {
-    await connectToDB();
-
-    const { email, password } = await request.json();
-
     const user = await User.findOne({ email });
     if (!user) {
-      return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 400 });
+      return Response.json({ error: "User not found" }, { status: 404 });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 400 });
+      return Response.json({ error: "Invalid credentials" }, { status: 401 });
     }
 
-    // Create JWT token
-    const token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    // Generate token
+    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: "1d" });
 
-    return new Response(JSON.stringify({ token }), { status: 200 });
-  } catch (error) {
-    console.error(error);
-    return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500 });
+    return Response.json({ message: "Signed in successfully", token });
+  } catch (err) {
+    return Response.json({ error: "Signin failed" }, { status: 500 });
   }
 }
