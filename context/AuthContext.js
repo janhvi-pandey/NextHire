@@ -27,23 +27,25 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Sign In Function
-  const signIn = async (email, password) => {
-    try {
-      const res = await fetch('/api/auth/signIn', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+const signIn = async (email, password) => {
+  try {
+    const res = await fetch('/api/auth/signIn', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Signin failed');
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Signin failed');
 
-      setToken(data.token);
-      console.log('Signin successful!');
-    } catch (err) {
-      alert(err.message);
-    }
-  };
+    setToken(data.token);
+    console.log('Signin successful!');
+     return true;
+  } catch (err) {
+    alert(err.message);
+    return false;
+  }
+};
 
   return (
     <AuthContext.Provider value={{ token, signUp, signIn }}>
