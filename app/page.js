@@ -1,10 +1,10 @@
-import HeroSection from '@/components/HeroSection'
+import LandingPage from '@/components/Landpage';
 
 export default function Home() {
   return (
     <main className="bg-black">
       
-      <HeroSection />
+      <LandingPage/>
     </main>
   );
 }

@@ -49,23 +49,28 @@ const HeroSection = () => {
 
   return (
     <section className="relative w-full min-h-screen flex flex-col justify-center items-center text-center px-6 ">
-      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-normal p-4 bg-gradient-to-b from-gray-100 via-gray-300 to-gray-500 text-transparent bg-clip-text">
-        Finding the Right Job is Hard?
-      </h1>
+      <div className={open ? "blur-sm" : ""}>
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-normal p-4 bg-gradient-to-b from-gray-200 via-gray-300 to-gray-600 text-transparent bg-clip-text">
+          Finding the <span className="text-amber-400">Right Job</span> is Hard?
+        </h1>
+      </div>
+      <div className={open ? "blur-sm" : ""}>
+        <p className="mt-6 text-base sm:text-lg text-gray-300 max-w-xl">
+          Endless listings, zero clarity — but no worries, we’re here to
+          simplify it.
+        </p>
+      </div>
 
-      <p className="mt-6 text-base sm:text-lg text-gray-300 max-w-xl">
-        Endless listings, zero clarity — but no worries, we’re here to simplify
-        it.
-      </p>
-
-      <p className="mt-4 text-lg sm:text-xl font-semibold text-amber-400 max-w-xl">
-        NextHire uses AI to match you with the best jobs tailored to your skills
-        and preferences.
-      </p>
+      <div className={open ? "blur-sm" : ""}>
+        <p className="mt-4 text-lg sm:text-xl font-semibold text-gray-400 max-w-xl">
+          NextHire uses AI to match you with the best jobs tailored to your
+          skills and preferences.
+        </p>
+      </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button className="mt-8 px-6 py-3 text-lg rounded-xl">
+          <Button className="mt-8 px-6 py-3 text-lg  text-amber-500 hover:text-yellow-400 transition rounded-xl">
             Land your dream job now
           </Button>
         </DialogTrigger>

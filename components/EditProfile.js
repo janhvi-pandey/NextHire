@@ -1,146 +1,206 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import React, { useEffect, useState } from "react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import { useUserProfile } from "@/context/UserProfileContext";
 
-export default function EditProfile({ user }) {
-  const [form, setForm] = useState({
-    name: user.name || '',
-    location: user.location || '',
-    experience: user.experience || '',
-    skills: user.skills || [],
-    preferredJobType: user.preferredJobType || 'Any',
+export default function EditProfile() {
+  const { user } = useAuth();
+  const { updateProfile } = useUserProfile();
+  const router = useRouter();
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    location: "",
+    yearsOfExperience: "",
+    skills: "",
+    jobType: "",
   });
 
-  const skillOptions = [
-    'React',
-    'Node.js',
-    'Tailwind CSS',
-    'GraphQL',
-    'Python',
-    'Machine Learning',
-    'Figma',
-    'SQL',
-  ];
+  const [initialized, setInitialized] = useState(false);
+  useEffect(() => {
+    if (!user) {
+      router.push("/");
+      return;
+    }
 
-  const jobTypes = ['Remote', 'Onsite', 'Any'];
+    if (!initialized && user && typeof user.skills !== "undefined") {
+      setFormData({
+        name: user.name || "",
+        email: user.email || "",
+        location: user.location || "",
+        yearsOfExperience: user.yearsOfExperience?.toString() || "",
+        skills: Array.isArray(user.skills)
+          ? user.skills.join(", ")
+          : typeof user.skills === "string"
+          ? user.skills
+          : "",
+        jobType: user.jobType || "",
+      });
+      setInitialized(true);
+    }
+  }, [user, initialized, router]);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    if (name === 'skills') {
-      if (checked) {
-        setForm((prev) => ({
-          ...prev,
-          skills: [...prev.skills, value],
-        }));
+  const handleSubmit = async () => {
+    const { name, location, yearsOfExperience, skills, jobType } = formData;
+
+    if (
+      !name.trim() ||
+      !location.trim() ||
+      !yearsOfExperience ||
+      !skills.trim() ||
+      !jobType
+    ) {
+      toast.error("Please fill in all the required fields.");
+      return;
+    }
+
+    const experienceNum = Number(yearsOfExperience);
+    if (isNaN(experienceNum) || experienceNum < 0) {
+      toast.error("Years of experience must be a valid non-negative number.");
+      return;
+    }
+
+    const skillArray = skills
+      .split(",")
+      .map((skill) => skill.trim())
+      .filter((skill) => skill.length > 0);
+
+    if (skillArray.length === 0) {
+      toast.error("Please enter at least one skill.");
+      return;
+    }
+
+    try {
+      const response = await updateProfile(
+        name.trim(),
+        location.trim(),
+        experienceNum,
+        skillArray,
+        jobType
+      );
+
+      if (response === "Profile updated successfully") {
+        toast.success("Your profile has been updated");
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 1000);
       } else {
-        setForm((prev) => ({
-          ...prev,
-          skills: prev.skills.filter((skill) => skill !== value),
-        }));
+        toast.error(
+          response || "Something went wrong while updating your profile."
+        );
       }
-    } else {
-      setForm((prev) => ({ ...prev, [name]: value }));
+    } catch (error) {
+      console.error("Update profile error:", error);
+      toast.error("An unexpected error occurred. Please try again.");
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Submit logic here
-    alert('Profile updated successfully!');
-  };
+  if (!initialized) {
+    return (
+      <p className="text-center text-gray-400 mt-10">Loading profile...</p>
+    );
+  }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-xl mx-auto bg-gray-900 p-8 rounded-xl shadow-lg border border-gray-700 text-gray-300 space-y-6"
-    >
-
-      <div>
-        <Label htmlFor="name" className="block mb-2 text-yellow-400 font-medium">
-          Name
-        </Label>
-        <Input
-          id="name"
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          required
-          className="bg-gray-800 text-white placeholder-gray-500 focus:ring-yellow-400 focus:border-yellow-400 rounded-md px-4 py-2 w-full"
+    <section className="container mx-auto flex flex-col items-center justify-center max-w-[90%] md:w-1/2 bg-gradient-to-b from-[#0c0c0c] via-[#0c0c0c] to-[#1a1a1a] text-white rounded-2xl p-8 md:px-16 shadow-lg space-y-8">
+      <div className="w-full space-y-3">
+        <FormField
+          label="Display Name"
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
         />
-      </div>
-
-      <div>
-        <Label htmlFor="location" className="block mb-2 text-yellow-400 font-medium">
-          Location
-        </Label>
-        <Input
-          id="location"
-          name="location"
-          value={form.location}
-          onChange={handleChange}
-          className="bg-gray-800 text-white placeholder-gray-500 focus:ring-yellow-400 focus:border-yellow-400 rounded-md px-4 py-2 w-full"
+        <FormField label="Email" value={formData.email} disabled />
+        <FormField
+          label="Location"
+          value={formData.location}
+          onChange={(e) =>
+            setFormData({ ...formData, location: e.target.value })
+          }
         />
-      </div>
-
-      <div>
-        <Label htmlFor="experience" className="block mb-2 text-yellow-400 font-medium">
-          Years of Experience
-        </Label>
-        <Input
-          id="experience"
-          name="experience"
+        <FormField
+          label="Experience (years)"
           type="number"
-          min="0"
-          value={form.experience}
-          onChange={handleChange}
-          className="bg-gray-800 text-white placeholder-gray-500 focus:ring-yellow-400 focus:border-yellow-400 rounded-md px-4 py-2 w-full"
+          value={formData.yearsOfExperience}
+          onChange={(e) =>
+            setFormData({ ...formData, yearsOfExperience: e.target.value })
+          }
         />
-      </div>
+        <FormField
+          label="Skills (comma separated)"
+          value={formData.skills}
+          onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
+        />
 
-      <div>
-        <Label className="block mb-2 text-yellow-400 font-medium">Skills</Label>
-        <div className="flex flex-wrap gap-3 text-gray-300">
-          {skillOptions.map((skill) => (
-            <label key={skill} className="inline-flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                name="skills"
-                value={skill}
-                checked={form.skills.includes(skill)}
-                onChange={handleChange}
-                className="accent-yellow-400"
-              />
-              <span>{skill}</span>
-            </label>
-          ))}
+        <div className="space-y-1">
+          <Label className="text-sm font-medium text-white/90">Job Type</Label>
+          <div className="flex gap-4 text-white">
+            {["Remote", "Hybrid", "Onsite"].map((type) => (
+              <label
+                key={type}
+                className={`flex items-center gap-2 text-sm ${
+                  formData.jobType === type
+                    ? "font-semibold text-white"
+                    : "text-white/80"
+                }`}
+              >
+                <Input
+                  className="accent-white"
+                  type="radio"
+                  name="jobType"
+                  value={type}
+                  checked={formData.jobType === type}
+                  onChange={(e) =>
+                    setFormData({ ...formData, jobType: e.target.value })
+                  }
+                />
+                {type}
+              </label>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div>
-        <Label className="block mb-2 text-yellow-400 font-medium">Preferred Job Type</Label>
-        <select
-          name="preferredJobType"
-          value={form.preferredJobType}
-          onChange={handleChange}
-          className="bg-gray-800 text-white placeholder-gray-500 focus:ring-yellow-400 focus:border-yellow-400 rounded-md px-4 py-2 w-full"
+        <Button
+          className="w-full mt-6 bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-500 hover:brightness-110 text-black font-bold transition"
+          onClick={handleSubmit}
         >
-          {jobTypes.map((type) => (
-            <option key={type} value={type} className="bg-gray-800 text-white">
-              {type}
-            </option>
-          ))}
-        </select>
+          Update Profile
+        </Button>
       </div>
+    </section>
+  );
+}
 
-      <Button
-        type="submit"
-        className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-gray-900 font-semibold rounded-md py-3 shadow-md transition-transform hover:scale-105"
-      >
-        Save Changes
-      </Button>
-    </form>
+function FormField({
+  label,
+  type = "text",
+  value,
+  onChange,
+  disabled = false,
+}) {
+  return (
+    <div className="space-y-1">
+      <Label className="text-sm font-medium text-white/90">
+        {label}{" "}
+        {disabled && (
+          <span className="text-xs text-gray-500">(Cannot be changed)</span>
+        )}
+      </Label>
+      <Input
+        type={type}
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+        className=" text-pink border-[#212f3D] focus:ring-white/50"
+        placeholder={label}
+        min={type === "number" ? 0 : undefined}
+      />
+    </div>
   );
 }

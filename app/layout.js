@@ -1,8 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
-import ConstellationBackground from "@/components/reusable/ConstellationBackground";
 import "./globals.css";
-import { AuthProvider } from '@/context/AuthContext';
-
+import { AuthProvider } from "@/context/AuthContext";
+import { UserProfileProvider } from "@/context/UserProfileContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,13 +23,10 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-
-      > 
-      <ConstellationBackground/>
-      <AuthProvider>
-          {children}
+      >
+        <AuthProvider>
+          <UserProfileProvider>{children}</UserProfileProvider>
         </AuthProvider>
-        
       </body>
     </html>
   );
