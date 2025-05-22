@@ -3,7 +3,7 @@ import User from "@/models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export async function POST(req) {
   await connectDB();
@@ -20,9 +20,10 @@ export async function POST(req) {
       return Response.json({ error: "Invalid credentials" }, { status: 401 });
     }
 
-    // Generate token
-    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: "1d" });
-
+    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, {
+      expiresIn: "1d",
+    });
+    
     return Response.json({ message: "Signed in successfully", token });
   } catch (err) {
     return Response.json({ error: "Signin failed" }, { status: 500 });

@@ -18,8 +18,6 @@ export async function POST(req) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({ name, email, password: hashedPassword });
     await newUser.save();
-
-    // Generate JWT token
     const token = jwt.sign({ id: newUser._id, email: newUser.email }, JWT_SECRET, { expiresIn: "1d" });
 
     return Response.json({ message: "User registered successfully", token });

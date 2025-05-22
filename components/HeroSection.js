@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -16,7 +16,7 @@ import { useAuth } from "@/context/AuthContext";
 
 const HeroSection = () => {
   const [open, setOpen] = useState(false);
-  const [mode, setMode] = useState("signup"); // 'signup' or 'signin'
+  const [mode, setMode] = useState("signup");
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const { signUp, signIn } = useAuth();
   const router = useRouter();
@@ -27,12 +27,19 @@ const HeroSection = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (mode === "signup") {
-      await signUp(form.name, form.email, form.password);
-      setOpen(false);
+      try {
+        await signUp(form.name, form.email, form.password);
+        setMode("signin");
+        setForm({ name: "", email: "", password: "" });
+      } catch (error) {
+        alert(error.message);
+      }
     } else {
       const success = await signIn(form.email, form.password);
       if (success) {
+        setOpen(false);
         router.push("/dashboard");
       }
     }
@@ -47,17 +54,19 @@ const HeroSection = () => {
       </h1>
 
       <p className="mt-6 text-base sm:text-lg text-gray-300 max-w-xl">
-        Endless listings, zero clarity — but no worries, we’re here to simplify it.
+        Endless listings, zero clarity — but no worries, we’re here to simplify
+        it.
       </p>
 
       <p className="mt-4 text-lg sm:text-xl font-semibold text-amber-400 max-w-xl">
-        Jobify uses AI to match you with the best jobs tailored to your skills and preferences.
+        NextHire uses AI to match you with the best jobs tailored to your skills
+        and preferences.
       </p>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button className="mt-8 px-6 py-3 text-lg rounded-xl">
-            Land your new job now
+            Land your dream job now
           </Button>
         </DialogTrigger>
 
@@ -67,14 +76,17 @@ const HeroSection = () => {
         >
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold mb-6">
-              {isSignUp ? "Create Your Jobify Account" : "Welcome Back"}
+              {isSignUp ? "Create Your NextHire Account" : "Welcome Back"}
             </DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {isSignUp && (
               <div>
-                <Label htmlFor="name" className="block mb-2 text-gray-300 font-medium">
+                <Label
+                  htmlFor="name"
+                  className="block mb-2 text-gray-300 font-medium"
+                >
                   Name
                 </Label>
                 <Input
@@ -88,7 +100,10 @@ const HeroSection = () => {
               </div>
             )}
             <div>
-              <Label htmlFor="email" className="block mb-2 text-gray-300 font-medium">
+              <Label
+                htmlFor="email"
+                className="block mb-2 text-gray-300 font-medium"
+              >
                 Email
               </Label>
               <Input
@@ -102,7 +117,10 @@ const HeroSection = () => {
               />
             </div>
             <div>
-              <Label htmlFor="password" className="block mb-2 text-gray-300 font-medium">
+              <Label
+                htmlFor="password"
+                className="block mb-2 text-gray-300 font-medium"
+              >
                 Password
               </Label>
               <Input
