@@ -18,7 +18,7 @@ export async function GET(req) {
     } else {
       const skills = skillQuery
         .split(',')
-        .map(skill => new RegExp(`.*${skill.trim()}.*`, 'i')); // <<< change here
+        .map(skill => new RegExp(`.*${skill.trim()}.*`, 'i')); 
 
       jobs = await Jobs.find({ skills: { $in: skills } }).sort({ postedAt: -1 });
 
