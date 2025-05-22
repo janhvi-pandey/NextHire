@@ -113,6 +113,7 @@ export default function EditProfile() {
       <div className="w-full space-y-3">
         <FormField
           label="Display Name"
+          
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
         />
@@ -131,12 +132,14 @@ export default function EditProfile() {
           onChange={(e) =>
             setFormData({ ...formData, yearsOfExperience: e.target.value })
           }
-        />
-        <FormField
-          label="Skills (comma separated)"
-          value={formData.skills}
-          onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
-        />
+        /><FormField
+  label="Skills (comma separated)"
+  placeholder="React, Python, C, Node.js, AWS"
+  value={formData.skills}
+  onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
+/>
+
+        
 
         <div className="space-y-1">
           <Label className="text-sm font-medium text-white/90">Job Type</Label>
