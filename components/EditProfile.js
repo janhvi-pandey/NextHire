@@ -50,57 +50,65 @@ export default function EditProfile() {
   }
 
   const handleSubmit = async () => {
-    const { name, location, yearsOfExperience, skills, jobType } = formData;
+  const { name, location, yearsOfExperience, skills, jobType } = formData;
 
-    if (
-      !name.trim() ||
-      !location.trim() ||
-      !yearsOfExperience ||
-      !skills.trim() ||
-      !jobType
-    ) {
-      toast.error("Please fill in all the required fields.");
-      return;
+  if (
+    !name.trim() ||
+    !location.trim() ||
+    !yearsOfExperience ||
+    !skills.trim() ||
+    !jobType
+  ) {
+    toast.error("Please fill in all the required fields.");
+    return;
+  }
+
+  const locationRegex = /^[a-zA-Z\s]+$/;
+  if (!locationRegex.test(location.trim())) {
+    toast.error("Location can only contain letters and spaces.");
+    return;
+  }
+
+  const experienceNum = Number(yearsOfExperience);
+  if (isNaN(experienceNum) || experienceNum < 0) {
+    toast.error("Years of experience must be a valid non-negative number.");
+    return;
+  }
+
+  const skillArray = skills
+    .split(",")
+    .map((skill) => skill.trim())
+    .filter((skill) => skill.length > 0);
+
+  if (skillArray.length === 0) {
+    toast.error("Please enter at least one skill.");
+    return;
+  }
+
+  try {
+    const response = await updateProfile(
+      name.trim(),
+      location.trim(),
+      experienceNum,
+      skillArray,
+      jobType
+    );
+    console.log(response);
+
+    if (response === "Profile updated successfully") {
+      toast.success("Your profile has been updated");
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 1000);
+    } else {
+      toast.error(response || "Something went wrong while updating profile.");
     }
+  } catch (error) {
+    console.error("Update profile error:", error);
+    toast.error("An unexpected error occurred. Please try again.");
+  }
+};
 
-    const experienceNum = Number(yearsOfExperience);
-    if (isNaN(experienceNum) || experienceNum < 0) {
-      toast.error("Years of experience must be a valid non-negative number.");
-      return;
-    }
-
-    const skillArray = skills
-      .split(",")
-      .map((skill) => skill.trim())
-      .filter((skill) => skill.length > 0);
-
-    if (skillArray.length === 0) {
-      toast.error("Please enter at least one skill.");
-      return;
-    }
-
-    try {
-      const response = await updateProfile(
-        name.trim(),
-        location.trim(),
-        experienceNum,
-        skillArray,
-        jobType
-      );
-
-      if (response === "Profile updated successfully") {
-        toast.success("Your profile has been updated");
-        setTimeout(() => {
-          router.push("/dashboard");
-        }, 1000);
-      } else {
-        toast.error(response || "Something went wrong while updating profile.");
-      }
-    } catch (error) {
-      console.error("Update profile error:", error);
-      toast.error("An unexpected error occurred. Please try again.");
-    }
-  };
 
   return (
         <div className="bg-black min-h-screen"><section

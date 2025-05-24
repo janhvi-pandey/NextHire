@@ -36,19 +36,19 @@ export default function DashboardPage() {
       className="flex flex-col lg:flex-row min-h-screen text-white"
       style={{
         background:
-          'linear-gradient(to bottom, #121212, #262626)', // dark gradient background
+          'linear-gradient(to bottom, #121212, #262626)', 
       }}
     >
-      {/* Sidebar: 20% width */}
+      {/* Sidebar */}
       <div className="lg:w-1/5 border-r border-yellow-500/40">
         <Sidebar user={user} setActiveSection={setActiveSection} />
       </div>
 
-      {/* Main content: 80% width */}
+      {/* Main content*/}
       <main className="lg:w-4/5 p-6 bg-black bg-opacity-60">
         <h1 className="text-3xl font-extrabold text-yellow-400 mb-6">
           {activeSection === 'jobs'
-            ? 'Best Jobs for You'
+            ? 'Land your dream job now !'
             : activeSection === 'view-profile'
             ? 'Your Profile'
             : activeSection === 'edit-profile'
