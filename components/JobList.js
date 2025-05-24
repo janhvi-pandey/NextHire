@@ -24,7 +24,7 @@ export default function JobList() {
   if (loading) return <p className="text-gray-400">Loading jobs...</p>;
 
   return (
-    <div className="space-y-6">
+    <div className=" min-h-screen space-y-6 ">
       <h2 className="text-xl font-bold text-gray-100">{headline || "Jobs you might be interested in"}</h2>
 
       {jobs.length === 0 ? (

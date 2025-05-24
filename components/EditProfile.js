@@ -103,7 +103,7 @@ export default function EditProfile() {
   };
 
   return (
-    <section
+        <div className="bg-black min-h-screen"><section
       className="container mx-auto flex flex-col items-center
      justify-center max-w-[90%] md:w-1/2 bg-gradient-to-b from-[#0c0c0c] via-[#0c0c0c] to-[#1a1a1a] text-white rounded-2xl p-8 md:px-16 shadow-lg space-y-8"
     >
@@ -170,6 +170,8 @@ export default function EditProfile() {
         </Button>
       </div>
     </section>
+</div>
+    
   );
 }
 

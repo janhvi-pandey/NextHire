@@ -11,7 +11,8 @@ export default function ViewProfile() {
   }
 
   return (
-    <div className="mt-18 max-w-2xl mx-auto relative bg-black rounded-xl p-5 shadow-md border border-gray-700 hover:shadow-gray-600 transition-shadow flex flex-col justify-between">
+    <div className="bg-black min-h-screen">
+ <div className=" mt-18 max-w-2xl mx-auto relative rounded-xl p-5 shadow-md border border-gray-700 hover:shadow-gray-600 transition-shadow flex flex-col justify-between">
       <div className="space-y-6 text-white">
         <p><strong className="mr-2">Name:</strong> {user.name}</p>
         <p><strong className="mr-2">Location:</strong> {user.location || "N/A"}</p>
@@ -20,5 +21,7 @@ export default function ViewProfile() {
         <p><strong className="mr-2">Job Type:</strong> {user.jobType || "N/A"}</p>
       </div>
     </div>
+    </div>
+   
   );
 }
