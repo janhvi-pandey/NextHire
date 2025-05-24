@@ -35,7 +35,7 @@ export const UserProfileProvider = ({ children }) => {
       const data = await response.json();
 
       if (response.ok) {
-        await fetchUser(token); // 🔄 refresh local user state
+        await fetchUser(token); 
       }
 
       return data.message;

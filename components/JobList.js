@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import { LuBriefcase } from "react-icons/lu";
 import { useAuth } from "@/context/AuthContext";
-import { useJobs } from "@/context/JobContext"; 
+import { useJobs } from "@/context/JobContext";
 
 export default function JobList() {
   const { user, fetchUser, token } = useAuth();
@@ -12,10 +12,10 @@ export default function JobList() {
   useEffect(() => {
     const fetchJobs = async () => {
       if (!user && token) {
-        await fetchUser(token); 
+        await fetchUser(token);
       }
 
-      await getJobsOnScore(); 
+      await getJobsOnScore();
     };
 
     fetchJobs();
@@ -25,7 +25,9 @@ export default function JobList() {
 
   return (
     <div className=" min-h-screen space-y-6 ">
-      <h2 className="text-xl font-bold text-gray-100">{headline || "Jobs you might be interested in"}</h2>
+      <h2 className="text-xl font-bold text-gray-100">
+        {headline || "Jobs you might be interested in"}
+      </h2>
 
       {jobs.length === 0 ? (
         <p className="text-gray-400">No jobs found based on your profile.</p>

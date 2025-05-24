@@ -29,7 +29,7 @@ export async function GET(req) {
 
     return NextResponse.json({ jobs, headline });
   } catch (err) {
-    console.error('Error fetching jobs:', err);
+    // console.error('Error fetching jobs:', err);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   } finally {
     await mongoose.disconnect();

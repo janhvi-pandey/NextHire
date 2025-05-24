@@ -12,7 +12,7 @@ export const JobProvider = ({ children }) => {
   const getJobsOnScore = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token'); // Ensure token is stored here after login
+      const token = localStorage.getItem('token'); 
 
       const res = await fetch('/api/jobs/getjobs', {
         method: 'GET',
@@ -23,14 +23,14 @@ export const JobProvider = ({ children }) => {
 
       const data = await res.json();
 
-      if (!res.ok) {
-        console.error('Server error:', data.message || data.error);
-        return;
-      }
+      // if (!res.ok) {
+      //   console.error('Server error:', data.message || data.error);
+      //   return;
+      // }
 
-      console.log('Fetched scored jobs:', data.jobs);
+      // console.log('Fetched scored jobs:', data.jobs);
       setJobs(data.jobs);
-      setHeadline('Recommended Jobs For You');
+      setHeadline('Recommended Jobs For You ');
     } catch (err) {
       console.error('Failed to fetch jobs:', err);
     } finally {

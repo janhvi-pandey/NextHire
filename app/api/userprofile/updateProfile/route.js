@@ -9,7 +9,7 @@ export async function PUT(request) {
     await connectDB();
 
     const token = request.headers.get('token');
-    console.log("Received token:", token);
+    // console.log("Received token:", token);
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized - No token' }, { status: 401 });
     }
@@ -17,17 +17,17 @@ export async function PUT(request) {
     let decoded;
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET);
-      console.log("Decoded token:", decoded);
+      // console.log("Decoded token:", decoded);
     } catch (err) {
-      console.error("JWT Verify failed:", err);
+      // console.error("JWT Verify failed:", err);
       return NextResponse.json({ error: 'Unauthorized - Invalid token' }, { status: 401 });
     }
 
     const userId = decoded.id;
-    console.log("User ID from token:", userId);
+    // console.log("User ID from token:", userId);
 
     const body = await request.json();
-    console.log("Request body:", body);
+    // console.log("Request body:", body);
 
     const { name, location, yearsOfExperience, skills, jobType } = body;
 
@@ -53,7 +53,7 @@ export async function PUT(request) {
     });
 
   } catch (error) {
-    console.error('Error updating profile:', error);
+    // console.error('Error updating profile:', error);
     return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 });
   }
 }

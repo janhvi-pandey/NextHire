@@ -20,7 +20,7 @@ export async function GET(req) {
 
     return new Response(JSON.stringify({ user }), { status: 200 });
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     return new Response(JSON.stringify({ message: "Internal server error" }), { status: 500 });
   }
 }

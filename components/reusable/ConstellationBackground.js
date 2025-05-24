@@ -16,7 +16,6 @@ const ConstellationBackground = () => {
 
     const particles = [];
 
-    // Initial 100 particles randomly distributed
     for (let i = 0; i < 100; i++) {
       particles.push({
         x: Math.random() * width,
@@ -26,26 +25,25 @@ const ConstellationBackground = () => {
       });
     }
 
-    // 10 extra particles biased to right or left-center
     for (let i = 0; i < 10; i++) {
       const isRight = Math.random() < 0.5;
       particles.push({
         x: isRight
-          ? width * (0.75 + Math.random() * 0.25) // Right side (75%-100%)
-          : width * Math.random() * 0.3,          // Left center (0%-30%)
+          ? width * (0.75 + Math.random() * 0.25) 
+          : width * Math.random() * 0.3,          
         y: isRight
           ? Math.random() * height
-          : height * (0.4 + Math.random() * 0.2), // Vertical center-ish (40%-60%)
+          : height * (0.4 + Math.random() * 0.2), 
         vx: (Math.random() - 0.5) * 0.5,
         vy: (Math.random() - 0.5) * 0.5,
       });
     }
 
-    // 5 extra particles at top-right
+    
     for (let i = 0; i < 5; i++) {
       particles.push({
-        x: width * (0.75 + Math.random() * 0.25), // Right side (75%-100%)
-        y: height * Math.random() * 0.25,         // Top (0%-25%)
+        x: width * (0.75 + Math.random() * 0.25), 
+        y: height * Math.random() * 0.25,         
         vx: (Math.random() - 0.5) * 0.5,
         vy: (Math.random() - 0.5) * 0.5,
       });
