@@ -42,7 +42,9 @@ NextHire is a full-stack application built with Next.js designed to connect user
 
 ### Jobs
 
-* **GET** `/api/jobs?skills=skill1,skill2` — Fetch jobs filtered by skills (case-insensitive partial match)
+* **GET** `/api/jobs/getjobs` — Fetches the top 5 jobs for the authenticated user based on a relevance score.  
+  The score is calculated by matching skills, location, job type, and years of experience.
+  Requires a Bearer token for authentication.
 
 ---
 
