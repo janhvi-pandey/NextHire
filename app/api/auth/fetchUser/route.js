@@ -15,6 +15,7 @@ export async function GET(req) {
     }
 
     const decodedToken = jwt.verify(token, JWT_SECRET);
+ 
     const user = await User.findById(decodedToken.id).select("-password"); 
 
     return new Response(JSON.stringify({ user }), { status: 200 });

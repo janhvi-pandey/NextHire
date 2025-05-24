@@ -7,16 +7,18 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
       setToken(storedToken);
-      fetchUser(storedToken);
+      fetchUser(storedToken).finally(() => setLoading(false));
+    } else {
+      setLoading(false);
     }
   }, []);
 
-  // Sign Up function
   const signUp = async (name, email, password) => {
     try {
       const res = await fetch("/api/auth/signUp", {
@@ -39,7 +41,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Sign In function
   const signIn = async (email, password) => {
     try {
       const res = await fetch("/api/auth/signIn", {
@@ -62,14 +63,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Sign Out function
   const signOut = () => {
     localStorage.removeItem("token");
     setToken(null);
     setUser(null);
   };
 
-  // Fetch user function
   const fetchUser = async (authToken) => {
     try {
       const res = await fetch("/api/auth/fetchUser", {
@@ -78,9 +77,9 @@ export const AuthProvider = ({ children }) => {
           token: authToken,
         },
       });
-      // console.log(res);
+
       const data = await res.json();
-      // console.log(data);
+
       if (!res.ok) throw new Error(data.error || "Failed to fetch user");
 
       setUser(data.user);
@@ -93,9 +92,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider
-      value={{ token, user, signUp, signIn, signOut, fetchUser }}
-    >
+    <AuthContext.Provider value={{ token, user, loading, signUp, signIn, signOut, fetchUser }}>
       {children}
     </AuthContext.Provider>
   );

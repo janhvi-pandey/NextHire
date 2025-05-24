@@ -1,55 +1,37 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { LuBriefcase } from "react-icons/lu";
 import { useAuth } from "@/context/AuthContext";
+import { useJobs } from "@/context/JobContext"; 
 
 export default function JobList() {
   const { user, fetchUser, token } = useAuth();
-  const [jobs, setJobs] = useState([]);
-  const [headline, setHeadline] = useState("");
-  const [loading, setLoading] = useState(true);
+  const { jobs, headline, loading, getJobsOnScore } = useJobs();
 
   useEffect(() => {
-    const loadJobs = async () => {
-      setLoading(true);
-      try {
-        let skills = "N/A";
-
-        if (!user && token) {
-          const fetchedUser = await fetchUser(token);
-          skills = fetchedUser.skills?.join(",") || "N/A";
-        } else if (user) {
-          skills = user.skills?.join(",") || "N/A";
-        }
-
-        const res = await fetch(`/api/jobs?skills=${skills}`);
-        const data = await res.json();
-
-        setJobs(data.jobs || []);
-        setHeadline(data.headline || "Jobs you might be interested in");
-      } catch (err) {
-        console.error("Failed to load jobs:", err);
-        setHeadline("Error loading jobs. Please try again later.");
-      } finally {
-        setLoading(false);
+    const fetchJobs = async () => {
+      if (!user && token) {
+        await fetchUser(token); 
       }
+
+      await getJobsOnScore(); 
     };
 
-    loadJobs();
-  }, [user, token]);
+    fetchJobs();
+  }, []);
 
   if (loading) return <p className="text-gray-400">Loading jobs...</p>;
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold text-gray-100">{headline}</h2>
+      <h2 className="text-xl font-bold text-gray-100">{headline || "Jobs you might be interested in"}</h2>
 
       {jobs.length === 0 ? (
-        <p className="text-gray-400">No jobs found based on your skills.</p>
+        <p className="text-gray-400">No jobs found based on your profile.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {jobs.map(({ _id, title, company, location, skills }) => (
+          {jobs.map(({ _id, title, company, location, skills = [] }) => (
             <div
               key={_id}
               className="relative bg-black rounded-xl p-5 shadow-md border border-gray-700 hover:shadow-gray-600 transition-shadow flex flex-col justify-between"

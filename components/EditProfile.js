@@ -10,7 +10,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useUserProfile } from "@/context/UserProfileContext";
 
 export default function EditProfile() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const { updateProfile } = useUserProfile();
   const router = useRouter();
 
@@ -24,13 +24,9 @@ export default function EditProfile() {
   });
 
   const [initialized, setInitialized] = useState(false);
-  useEffect(() => {
-    if (!user) {
-      router.push("/");
-      return;
-    }
 
-    if (!initialized && user && typeof user.skills !== "undefined") {
+  useEffect(() => {
+    if (!loading && user && !initialized) {
       setFormData({
         name: user.name || "",
         email: user.email || "",
@@ -45,7 +41,13 @@ export default function EditProfile() {
       });
       setInitialized(true);
     }
-  }, [user, initialized, router]);
+  }, [user, loading, initialized]);
+
+  if (loading || !user) {
+    return (
+      <p className="text-center text-gray-400 mt-10">Loading profile...</p>
+    );
+  }
 
   const handleSubmit = async () => {
     const { name, location, yearsOfExperience, skills, jobType } = formData;
@@ -92,9 +94,7 @@ export default function EditProfile() {
           router.push("/dashboard");
         }, 1000);
       } else {
-        toast.error(
-          response || "Something went wrong while updating your profile."
-        );
+        toast.error(response || "Something went wrong while updating profile.");
       }
     } catch (error) {
       console.error("Update profile error:", error);
@@ -102,18 +102,14 @@ export default function EditProfile() {
     }
   };
 
-  if (!initialized) {
-    return (
-      <p className="text-center text-gray-400 mt-10">Loading profile...</p>
-    );
-  }
-
   return (
-    <section className="container mx-auto flex flex-col items-center justify-center max-w-[90%] md:w-1/2 bg-gradient-to-b from-[#0c0c0c] via-[#0c0c0c] to-[#1a1a1a] text-white rounded-2xl p-8 md:px-16 shadow-lg space-y-8">
+    <section
+      className="container mx-auto flex flex-col items-center
+     justify-center max-w-[90%] md:w-1/2 bg-gradient-to-b from-[#0c0c0c] via-[#0c0c0c] to-[#1a1a1a] text-white rounded-2xl p-8 md:px-16 shadow-lg space-y-8"
+    >
       <div className="w-full space-y-3">
         <FormField
           label="Display Name"
-          
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
         />
@@ -132,15 +128,13 @@ export default function EditProfile() {
           onChange={(e) =>
             setFormData({ ...formData, yearsOfExperience: e.target.value })
           }
-        /><FormField
-  label="Skills (comma separated)"
-  placeholder="React, Python, C, Node.js, AWS"
-  value={formData.skills}
-  onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
-/>
-
-        
-
+        />
+        <FormField
+          label="Skills (comma separated)"
+          placeholder="React, Python, C, Node.js"
+          value={formData.skills}
+          onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
+        />
         <div className="space-y-1">
           <Label className="text-sm font-medium text-white/90">Job Type</Label>
           <div className="flex gap-4 text-white">
@@ -168,7 +162,6 @@ export default function EditProfile() {
             ))}
           </div>
         </div>
-
         <Button
           className="w-full mt-6 bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-500 hover:brightness-110 text-black font-bold transition"
           onClick={handleSubmit}
@@ -186,6 +179,7 @@ function FormField({
   value,
   onChange,
   disabled = false,
+  placeholder,
 }) {
   return (
     <div className="space-y-1">
@@ -200,8 +194,8 @@ function FormField({
         value={value}
         onChange={onChange}
         disabled={disabled}
-        className=" text-pink border-[#212f3D] focus:ring-white/50"
-        placeholder={label}
+        placeholder={placeholder || label}
+        className="text-pink border-[#212f3D] focus:ring-white/50"
         min={type === "number" ? 0 : undefined}
       />
     </div>

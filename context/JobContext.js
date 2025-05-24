@@ -1,21 +1,36 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 const JobContext = createContext();
 
 export const JobProvider = ({ children }) => {
   const [jobs, setJobs] = useState([]);
   const [headline, setHeadline] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  const fetchJobs = async (skills = 'N/A') => {
+  const getJobsOnScore = async () => {
     try {
-      const res = await fetch(`/api/jobs?skills=${skills}`);
+      setLoading(true);
+      const token = localStorage.getItem('token'); // Ensure token is stored here after login
+
+      const res = await fetch('/api/jobs/getjobs', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       const data = await res.json();
-      console.log(data);
+
+      if (!res.ok) {
+        console.error('Server error:', data.message || data.error);
+        return;
+      }
+
+      console.log('Fetched scored jobs:', data.jobs);
       setJobs(data.jobs);
-      setHeadline(data.headline);
+      setHeadline('Recommended Jobs For You');
     } catch (err) {
       console.error('Failed to fetch jobs:', err);
     } finally {
@@ -23,12 +38,8 @@ export const JobProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    fetchJobs(); 
-  }, []);
-
   return (
-    <JobContext.Provider value={{ jobs, headline, loading, fetchJobs }}>
+    <JobContext.Provider value={{ jobs, headline, loading, getJobsOnScore }}>
       {children}
     </JobContext.Provider>
   );

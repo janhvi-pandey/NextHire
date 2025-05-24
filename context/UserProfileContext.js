@@ -1,12 +1,14 @@
 "use client";
 
 import { useContext, createContext } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 const UserProfileContext = createContext();
 
 export const UserProfileProvider = ({ children }) => {
-  
+  const { token, fetchUser } = useAuth();
   const url = "http://localhost:3000";
+
   const updateProfile = async (
     name,
     location,
@@ -15,8 +17,6 @@ export const UserProfileProvider = ({ children }) => {
     jobType
   ) => {
     try {
-      const token = localStorage.getItem("token");
-    //   console.log(token);
       const response = await fetch(`${url}/api/userprofile/updateProfile`, {
         method: "PUT",
         headers: {
@@ -33,7 +33,11 @@ export const UserProfileProvider = ({ children }) => {
       });
 
       const data = await response.json();
-    //   console.log(data);
+
+      if (response.ok) {
+        await fetchUser(token); // 🔄 refresh local user state
+      }
+
       return data.message;
     } catch (error) {
       console.error("Error updating profile:", error);
